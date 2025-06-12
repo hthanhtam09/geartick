@@ -5,7 +5,7 @@ import { locales } from "./i18n";
 const intlMiddleware = createMiddleware({
   locales,
   defaultLocale: "en",
-  localePrefix: "as-needed",
+  localePrefix: "always",
 });
 
 export default clerkMiddleware((auth, req) => {

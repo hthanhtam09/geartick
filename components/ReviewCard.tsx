@@ -1,19 +1,18 @@
-import { Review } from "@/types";
+import { PopulatedReview } from "@/hooks/useReviews";
 import { Star, Clock, Eye, Heart } from "lucide-react";
 import OptimizedImage from "./OptimizedImage";
 
 interface ReviewCardProps {
-  review: Review & {
-    productId: {
-      title: string;
-      slug: string;
-      images: string[];
-    };
-  };
+  review: PopulatedReview;
   onClick: () => void;
+  onProductClick?: (productSlug: string, e: React.MouseEvent) => void;
 }
 
-const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
+const ReviewCard: React.FC<ReviewCardProps> = ({
+  review,
+  onClick,
+  onProductClick,
+}) => {
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -33,6 +32,22 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
         }`}
       />
     ));
+  };
+
+  const handleProductClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onProductClick && review.productId?.slug) {
+      onProductClick(review.productId.slug, e);
+    }
+  };
+
+  const handleProductKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (onProductClick && review.productId?.slug) {
+        onProductClick(review.productId.slug, e as unknown as React.MouseEvent);
+      }
+    }
   };
 
   return (
@@ -107,7 +122,14 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
       <div className="p-5">
         {/* Product Title */}
         {review.productId && (
-          <div className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">
+          <div
+            className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200 cursor-pointer"
+            onClick={handleProductClick}
+            tabIndex={0}
+            role="button"
+            aria-label={`View product: ${review.productId.title}`}
+            onKeyDown={handleProductKeyDown}
+          >
             {review.productId.title}
           </div>
         )}

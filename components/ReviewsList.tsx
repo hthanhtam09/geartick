@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Review, ApiResponse } from "@/types";
+import { useReviews } from "@/hooks/useReviews";
 import ReviewCard from "./ReviewCard";
 import LoadingSpinner from "./LoadingSpinner";
 import Pagination from "./Pagination";
@@ -20,64 +19,15 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
   category,
   locale,
 }) => {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    page: initialPage,
-    limit: 12,
-    total: 0,
-    pages: 0,
-  });
-
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const fetchReviews = async (page: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: pagination.limit.toString(),
-      });
-
-      if (featured) {
-        params.append("featured", "true");
-      }
-
-      if (category) {
-        params.append("category", category);
-      }
-
-      const response = await fetch(`/api/reviews?${params}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch reviews");
-      }
-
-      const data: ApiResponse<Review[]> = await response.json();
-
-      if (data.success) {
-        setReviews(data.data);
-        if (data.pagination) {
-          setPagination(data.pagination);
-        }
-      } else {
-        throw new Error(data.message || "Failed to fetch reviews");
-      }
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchReviews(initialPage);
-  }, [initialPage, featured, category]);
+  const { data, isLoading, error, refetch } = useReviews({
+    page: initialPage,
+    limit: 12,
+    featured,
+    category,
+  });
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -92,14 +42,18 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
     }
 
     router.push(`/${locale}/reviews?${params.toString()}`);
-    fetchReviews(newPage);
   };
 
   const handleReviewClick = (slug: string) => {
     router.push(`/${locale}/reviews/${slug}`);
   };
 
-  if (loading) {
+  const handleProductClick = (productSlug: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent review card click
+    router.push(`/${locale}/products/${productSlug}`);
+  };
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center py-16">
         <LoadingSpinner />
@@ -114,9 +68,11 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
           <div className="text-red-600 dark:text-red-400 font-medium mb-2">
             Error Loading Reviews
           </div>
-          <p className="text-red-500 dark:text-red-300 text-sm">{error}</p>
+          <p className="text-red-500 dark:text-red-300 text-sm">
+            {error instanceof Error ? error.message : "An error occurred"}
+          </p>
           <button
-            onClick={() => fetchReviews(pagination.page)}
+            onClick={() => refetch()}
             className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
           >
             Try Again
@@ -126,7 +82,7 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
     );
   }
 
-  if (reviews.length === 0) {
+  if (!data || data.reviews.length === 0) {
     return (
       <div className="text-center py-16">
         <div className="text-gray-500 dark:text-gray-400">
@@ -152,6 +108,8 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
     );
   }
 
+  const { reviews, pagination } = data;
+
   return (
     <div className="space-y-8">
       {/* Filter Summary */}
@@ -175,16 +133,11 @@ const ReviewsList: React.FC<ReviewsListProps> = ({
         {reviews.map((review) => (
           <ReviewCard
             key={review._id}
-            review={
-              review as Review & {
-                productId: {
-                  title: string;
-                  slug: string;
-                  images: string[];
-                };
-              }
-            }
+            review={review}
             onClick={() => handleReviewClick(review.slug)}
+            onProductClick={(productSlug, e) =>
+              handleProductClick(productSlug, e)
+            }
           />
         ))}
       </div>
