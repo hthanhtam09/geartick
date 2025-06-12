@@ -1,0 +1,89 @@
+{
+  "ProductComparison": {
+    "title": "Product Comparison",
+    "compareProducts": "Compare {count} products side by side",
+    "swipeHint": "Swipe horizontally to compare products",
+    "sections": {
+      "overview": "Overview",
+      "specifications": "Specifications",
+      "colors": "Colors",
+      "pricing": "Pricing"
+    },
+    "labels": {
+      "features": "Features",
+      "rating": "Rating",
+      "pros": "Pros",
+      "cons": "Cons",
+      "bestFor": "Best For",
+      "action": "Action",
+      "specification": "Specification",
+      "buyNow": "Buy Now",
+      "buyFor": "Buy for ${price}",
+      "colorsAvailable": "{count} color available",
+      "colorsAvailable_plural": "{count} colors available",
+      "noColorOptions": "No color options",
+      "moreItems": "+{count} more",
+      "selectColor": "Select {color} color for {product}"
+    },
+    "currency": "USD"
+  },
+  "ReviewPage": {
+    "category": "{category} Comparison",
+    "author": "By {name}",
+    "publishedDate": "{date}",
+    "readTime": "{minutes} min read",
+    "views": "{count} views",
+    "likes": "{count} likes",
+    "compareProducts": "Compare {count} products side by side",
+    "topPicks": "🏆 Our Top Picks",
+    "topPicksDescription": "Based on our comprehensive testing and analysis",
+    "winners": {
+      "overall": "Overall Winner",
+      "bestValue": "Best Value",
+      "premium": "Premium Choice"
+    },
+    "viewDeal": "View Deal",
+    "methodology": {
+      "title": "Our Testing Methodology",
+      "description": "We spent over 200 hours testing these smartphones in real-world scenarios. Our evaluation process includes performance benchmarks, camera quality tests, battery life assessments, and daily usage scenarios.",
+      "performance": {
+        "title": "Performance Testing",
+        "items": [
+          "Benchmark scores (AnTuTu, Geekbench)",
+          "Gaming performance at high settings",
+          "Multitasking and app switching",
+          "Heat management during intensive tasks"
+        ]
+      },
+      "camera": {
+        "title": "Camera Assessment",
+        "items": [
+          "Daylight photography quality",
+          "Low-light and night mode performance",
+          "Video recording capabilities",
+          "Portrait mode and computational photography"
+        ]
+      }
+    },
+    "conclusion": {
+      "title": "Final Thoughts",
+      "description": "Each of these smartphones excels in different areas. The iPhone 15 Pro offers the best overall experience with premium build quality and ecosystem integration. The Galaxy S24 Ultra is perfect for power users who need the S Pen and massive display. The Pixel 8 Pro provides the best AI features and pure Android experience. OnePlus 12 offers excellent value with flagship performance, while the Xiaomi 14 Ultra focuses on camera excellence.",
+      "disclosure": "Disclosure: This page contains affiliate links. We may earn a commission if you purchase through our links, at no additional cost to you. This helps support our testing and keeps our reviews independent and honest."
+    }
+  },
+  "Reviews": {
+    "meta": {
+      "title": "Product Reviews | GearTick",
+      "description": "Explore our comprehensive product reviews and comparisons. Find detailed insights, pros and cons, and expert recommendations for the best tech products."
+    },
+    "title": "Product Reviews",
+    "subtitle": "Discover in-depth reviews and expert insights on the latest tech products to help you make informed decisions."
+  },
+  "Common": {
+    "notFound": "Page Not Found",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "back": "Back",
+    "home": "Home"
+  }
+}

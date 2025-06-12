@@ -1,0 +1,89 @@
+{
+  "ProductComparison": {
+    "title": "So Sánh Sản Phẩm",
+    "compareProducts": "So sánh {count} sản phẩm cùng lúc",
+    "swipeHint": "Vuốt ngang để so sánh sản phẩm",
+    "sections": {
+      "overview": "Tổng Quan",
+      "specifications": "Thông Số Kỹ Thuật",
+      "colors": "Màu Sắc",
+      "pricing": "Giá Cả"
+    },
+    "labels": {
+      "features": "Tính Năng",
+      "rating": "Đánh Giá",
+      "pros": "Ưu Điểm",
+      "cons": "Nhược Điểm",
+      "bestFor": "Phù Hợp Cho",
+      "action": "Hành Động",
+      "specification": "Thông Số",
+      "buyNow": "Mua Ngay",
+      "buyFor": "Mua với ${price}",
+      "colorsAvailable": "{count} màu có sẵn",
+      "colorsAvailable_plural": "{count} màu có sẵn",
+      "noColorOptions": "Không có tùy chọn màu",
+      "moreItems": "+{count} mục khác",
+      "selectColor": "Chọn màu {color} cho {product}"
+    },
+    "currency": "USD"
+  },
+  "ReviewPage": {
+    "category": "So Sánh {category}",
+    "author": "Bởi {name}",
+    "publishedDate": "{date}",
+    "readTime": "{minutes} phút đọc",
+    "views": "{count} lượt xem",
+    "likes": "{count} lượt thích",
+    "compareProducts": "So sánh {count} sản phẩm cùng lúc",
+    "topPicks": "🏆 Lựa Chọn Hàng Đầu",
+    "topPicksDescription": "Dựa trên việc kiểm tra và phân tích toàn diện của chúng tôi",
+    "winners": {
+      "overall": "Người Chiến Thắng Chung",
+      "bestValue": "Giá Trị Tốt Nhất",
+      "premium": "Lựa Chọn Cao Cấp"
+    },
+    "viewDeal": "Xem Ưu Đãi",
+    "methodology": {
+      "title": "Phương Pháp Kiểm Tra",
+      "description": "Chúng tôi đã dành hơn 200 giờ để kiểm tra những chiếc smartphone này trong các tình huống thực tế. Quy trình đánh giá của chúng tôi bao gồm các bài kiểm tra hiệu suất, kiểm tra chất lượng camera, đánh giá thời lượng pin và các tình huống sử dụng hàng ngày.",
+      "performance": {
+        "title": "Kiểm Tra Hiệu Suất",
+        "items": [
+          "Điểm benchmark (AnTuTu, Geekbench)",
+          "Hiệu suất gaming ở cài đặt cao",
+          "Đa nhiệm và chuyển đổi ứng dụng",
+          "Quản lý nhiệt trong các tác vụ nặng"
+        ]
+      },
+      "camera": {
+        "title": "Đánh Giá Camera",
+        "items": [
+          "Chất lượng chụp ảnh ban ngày",
+          "Hiệu suất ánh sáng yếu và chế độ đêm",
+          "Khả năng quay video",
+          "Chế độ chân dung và nhiếp ảnh tính toán"
+        ]
+      }
+    },
+    "conclusion": {
+      "title": "Suy Nghĩ Cuối Cùng",
+      "description": "Mỗi chiếc smartphone này đều xuất sắc trong các lĩnh vực khác nhau. iPhone 15 Pro mang lại trải nghiệm tổng thể tốt nhất với chất lượng xây dựng cao cấp và tích hợp hệ sinh thái. Galaxy S24 Ultra hoàn hảo cho người dùng quyền lực cần S Pen và màn hình lớn. Pixel 8 Pro cung cấp các tính năng AI tốt nhất và trải nghiệm Android thuần túy. OnePlus 12 mang lại giá trị tuyệt vời với hiệu suất flagship, trong khi Xiaomi 14 Ultra tập trung vào sự xuất sắc của camera.",
+      "disclosure": "Tiết lộ: Trang này chứa các liên kết liên kết. Chúng tôi có thể kiếm được hoa hồng nếu bạn mua hàng thông qua các liên kết của chúng tôi, không phụ thu cho bạn. Điều này giúp hỗ trợ việc kiểm tra của chúng tôi và giữ cho các đánh giá của chúng tôi độc lập và trung thực."
+    }
+  },
+  "Reviews": {
+    "meta": {
+      "title": "Đánh Giá Sản Phẩm | GearTick",
+      "description": "Khám phá các đánh giá và so sánh sản phẩm toàn diện của chúng tôi. Tìm hiểu chi tiết, ưu nhược điểm và khuyến nghị chuyên gia cho các sản phẩm công nghệ tốt nhất."
+    },
+    "title": "Đánh Giá Sản Phẩm",
+    "subtitle": "Khám phá các đánh giá chuyên sâu và những hiểu biết chuyên gia về các sản phẩm công nghệ mới nhất để giúp bạn đưa ra quyết định sáng suốt."
+  },
+  "Common": {
+    "notFound": "Không Tìm Thấy Trang",
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "back": "Quay lại",
+    "home": "Trang chủ"
+  }
+}
