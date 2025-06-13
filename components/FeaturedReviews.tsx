@@ -14,92 +14,29 @@ interface FeaturedReviewsProps {
 const FeaturedReviews: React.FC<FeaturedReviewsProps> = ({ locale }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFeaturedReviews = async (): Promise<void> => {
       try {
-        // Mock data for now - replace with actual API call
-        const mockReviews: Review[] = [
-          {
-            _id: "1",
-            productId: "prod1",
-            title: "iPhone 15 Pro Max: The Ultimate Camera Phone?",
-            content: "After 3 weeks of testing...",
-            rating: 4.8,
-            pros: [
-              "Exceptional camera quality",
-              "Premium build",
-              "Great performance",
-            ],
-            cons: ["Expensive", "Heavy"],
-            verdict: "Best flagship phone for photography enthusiasts",
-            authorId: "author1",
-            authorName: "Tech Reviewer Pro",
-            authorImage: "/authors/tech-reviewer.jpg",
-            images: ["/reviews/iphone-15-pro.jpg"],
-            slug: "iphone-15-pro-max-ultimate-camera-phone",
-            likes: 234,
-            views: 12500,
-            isPublished: true,
-            isFeatured: true,
-            tags: ["smartphone", "apple", "camera"],
-            readTime: 8,
-            createdAt: new Date("2024-01-15"),
-            updatedAt: new Date("2024-01-15"),
-          },
-          {
-            _id: "2",
-            productId: "prod2",
-            title: "MacBook Air M3 vs MacBook Pro: Which Should You Buy?",
-            content: "Comprehensive comparison after using both...",
-            rating: 4.6,
-            pros: ["Great performance", "Excellent battery life", "Portable"],
-            cons: ["Limited ports", "Expensive upgrades"],
-            verdict: "MacBook Air M3 wins for most users",
-            authorId: "author2",
-            authorName: "Laptop Specialist",
-            authorImage: "/authors/laptop-specialist.jpg",
-            images: ["/reviews/macbook-comparison.jpg"],
-            slug: "macbook-air-m3-vs-pro-comparison",
-            likes: 189,
-            views: 8900,
-            isPublished: true,
-            isFeatured: true,
-            tags: ["laptop", "apple", "comparison"],
-            readTime: 12,
-            createdAt: new Date("2024-01-10"),
-            updatedAt: new Date("2024-01-10"),
-          },
-          {
-            _id: "3",
-            productId: "prod3",
-            title:
-              "Sony WH-1000XM5: Still the Best Noise-Canceling Headphones?",
-            content: "Updated review with long-term usage insights...",
-            rating: 4.7,
-            pros: ["Superior noise cancellation", "Comfortable", "Great sound"],
-            cons: ["Expensive", "Plastic build"],
-            verdict: "Still the gold standard for ANC headphones",
-            authorId: "author3",
-            authorName: "Audio Expert",
-            authorImage: "/authors/audio-expert.jpg",
-            images: ["/reviews/sony-wh1000xm5.jpg"],
-            slug: "sony-wh1000xm5-best-noise-canceling-headphones",
-            likes: 156,
-            views: 6700,
-            isPublished: true,
-            isFeatured: true,
-            tags: ["headphones", "sony", "audio"],
-            readTime: 6,
-            createdAt: new Date("2024-01-08"),
-            updatedAt: new Date("2024-01-08"),
-          },
-        ];
+        setLoading(true);
+        setError(null);
 
-        setReviews(mockReviews);
-        setLoading(false);
+        const response = await fetch("/api/reviews?featured=true&limit=3");
+        if (!response.ok) {
+          throw new Error("Failed to fetch featured reviews");
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          setReviews(data.data);
+        } else {
+          throw new Error(data.message || "Failed to fetch featured reviews");
+        }
       } catch (error) {
         console.error("Error fetching featured reviews:", error);
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
         setLoading(false);
       }
     };
@@ -167,6 +104,32 @@ const FeaturedReviews: React.FC<FeaturedReviewsProps> = ({ locale }) => {
     );
   }
 
+  if (error) {
+    return (
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <p className="text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              No featured reviews available at the moment.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
@@ -199,119 +162,97 @@ const FeaturedReviews: React.FC<FeaturedReviewsProps> = ({ locale }) => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group"
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group"
             >
               {/* Review Image */}
-              <div className="relative aspect-video overflow-hidden">
+              <div className="relative h-48 overflow-hidden">
                 <OptimizedImage
-                  src={review.images[0] || "/placeholder-review.jpg"}
+                  src={review.images?.[0] || "/placeholder-review.jpg"}
                   alt={review.title}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  fallbackSrc="/placeholder-product.jpg"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                {/* Rating Badge */}
-                <div className="absolute bottom-4 left-4">
-                  <div className="bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-white px-3 py-2 rounded-full text-sm font-medium backdrop-blur-sm flex items-center gap-2">
-                    <div className="flex items-center">
-                      {renderStars(review.rating)}
-                    </div>
-                    <span className="font-bold">
-                      {review.rating.toFixed(1)}
+                {review.isFeatured && (
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      Featured
                     </span>
                   </div>
-                </div>
-
-                {/* Read Time */}
-                <div className="absolute top-4 right-4">
-                  <div className="bg-black/50 text-white px-2 py-1 rounded-full text-sm backdrop-blur-sm flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {review.readTime} min
-                  </div>
+                )}
+                <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                  {renderStars(review.rating)}
                 </div>
               </div>
 
               {/* Review Content */}
               <div className="p-6">
-                {/* Author */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">
-                      {review.authorName.charAt(0)}
-                    </span>
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {review.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+                    {review.content}
+                  </p>
+                </div>
+
+                {/* Review Meta */}
+                <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{review.readTime} min read</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>{review.views.toLocaleString()}</span>
+                    </div>
                   </div>
+                  <div className="flex items-center gap-1">
+                    <ThumbsUp className="w-4 h-4" />
+                    <span>{review.likes}</span>
+                  </div>
+                </div>
+
+                {/* Author Info */}
+                <div className="flex items-center gap-3 mb-4">
+                  <OptimizedImage
+                    src={review.authorImage || "/placeholder-avatar.jpg"}
+                    alt={review.authorName}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {review.authorName}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 min-h-[3.5rem]">
-                  {review.title}
-                </h3>
-
-                {/* Verdict */}
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                  {review.verdict}
-                </p>
-
-                {/* Stats */}
-                <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {review.views.toLocaleString()}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <ThumbsUp className="w-4 h-4" />
-                      {review.likes}
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA */}
+                {/* Read More Button */}
                 <Link
                   href={`/${locale}/reviews/${review.slug}`}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors duration-200 group"
+                  className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300 transition-colors group"
                 >
                   Read Full Review
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
-
-                {/* Tags */}
-                {review.tags && review.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {review.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-xs"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             </motion.article>
           ))}
         </div>
 
-        {/* View All Reviews CTA */}
+        {/* View All Reviews Button */}
         <div className="text-center mt-12">
           <Link
             href={`/${locale}/reviews`}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-medium text-lg transition-all duration-200 transform hover:scale-105"
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 group"
           >
             View All Reviews
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </div>

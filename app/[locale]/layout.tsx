@@ -1,26 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "../globals.css";
-import QueryProvider from "../../components/providers/QueryProvider";
 import ThemeProvider from "../../components/providers/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import { locales } from "../../i18n";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "GearTick - Expert Product Reviews & Recommendations",
@@ -91,32 +78,22 @@ const LocaleLayout: React.FC<LocaleLayoutProps> = async ({
   const messages = await getMessages({ locale });
 
   return (
-    <ClerkProvider>
-      <html lang={locale} suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
-        >
-          <NextIntlClientProvider messages={messages}>
-            <ThemeProvider>
-              <QueryProvider>
-                <div className="flex min-h-screen flex-col">
-                  <Header />
-                  <main className="flex-1">{children}</main>
-                  <Footer />
-                </div>
-                <Toaster
-                  position="bottom-right"
-                  toastOptions={{
-                    duration: 4000,
-                    className: "dark:bg-gray-800 dark:text-white",
-                  }}
-                />
-              </QueryProvider>
-            </ThemeProvider>
-          </NextIntlClientProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <NextIntlClientProvider messages={messages}>
+      <ThemeProvider>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            duration: 4000,
+            className: "dark:bg-gray-800 dark:text-white",
+          }}
+        />
+      </ThemeProvider>
+    </NextIntlClientProvider>
   );
 };
 

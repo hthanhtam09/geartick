@@ -13,6 +13,12 @@ interface MongooseConnection {
   promise: Promise<mongoose.Connection> | null;
 }
 
+// MongoDB error interface
+interface MongoServerError extends Error {
+  code?: number;
+  codeName?: string;
+}
+
 // Add mongoose property to NodeJS.Global interface
 declare global {
   // eslint-disable-next-line no-var
@@ -70,6 +76,38 @@ const connectDB = async (retries = 3): Promise<mongoose.Connection> => {
           console.error("   5. Click 'Confirm'");
         }
 
+        // Handle authentication errors specifically
+        const mongoError = error as MongoServerError;
+        if (error.name === "MongoServerError" && mongoError.code === 8000) {
+          console.error(
+            "🔐 AUTHENTICATION ERROR: Invalid username or password"
+          );
+          console.error("🚨 SOLUTION: Update your MONGODB_URI in .env.local:");
+          console.error("   1. Go to https://cloud.mongodb.com");
+          console.error("   2. Navigate to Database Access");
+          console.error("   3. Click 'Edit' on your database user");
+          console.error("   4. Click 'Edit Password' and set a new password");
+          console.error("   5. Copy the new connection string");
+          console.error(
+            "   6. Update MONGODB_URI in .env.local with the new password"
+          );
+          console.error("");
+          console.error(
+            "   Current URI format: mongodb+srv://username:password@cluster..."
+          );
+          console.error("   Make sure the username and password are correct!");
+        }
+
+        // Handle other common errors
+        if (error.name === "MongoParseError") {
+          console.error(
+            "🔗 INVALID CONNECTION STRING: Check your MONGODB_URI format"
+          );
+          console.error(
+            "   Format should be: mongodb+srv://username:password@cluster..."
+          );
+        }
+
         // Reset the promise so we can retry
         cached.promise = null;
         throw error;
@@ -82,11 +120,13 @@ const connectDB = async (retries = 3): Promise<mongoose.Connection> => {
     cached.promise = null;
     console.error("❌ Failed to establish MongoDB connection:", e);
 
-    // Retry logic for transient errors
+    // Retry logic for transient errors (but not auth errors)
+    const mongoError = e as MongoServerError;
     if (
       retries > 0 &&
       e instanceof Error &&
-      e.name !== "MongooseServerSelectionError"
+      e.name !== "MongooseServerSelectionError" &&
+      !(e.name === "MongoServerError" && mongoError.code === 8000)
     ) {
       console.log(`🔄 Retrying connection... (${retries} attempts remaining)`);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds

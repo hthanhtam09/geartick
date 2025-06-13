@@ -2,7 +2,7 @@
 // The actual layout logic is in app/[locale]/layout.tsx
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextIntlClientProvider } from "next-intl";
@@ -10,7 +10,15 @@ import { getMessages } from "next-intl/server";
 import { getLocale } from "next-intl/server";
 import Providers from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "GearTick - Tech Reviews & Comparisons",
@@ -28,8 +36,10 @@ export default async function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang={locale}>
-        <body className={inter.className}>
+      <html lang={locale} suppressHydrationWarning>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
+        >
           <NextIntlClientProvider messages={messages}>
             <Providers>{children}</Providers>
           </NextIntlClientProvider>

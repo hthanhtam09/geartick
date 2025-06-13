@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import "@/lib/models"; // Import all models to ensure registration
-import Review from "@/lib/models/Review";
-import { currentUser } from "@clerk/nextjs/server";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Comparison, Product } from "@/lib/models";
 import { ApiResponse } from "@/types";
 
 export async function GET(request: NextRequest) {
@@ -12,43 +11,52 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
-    const featured = searchParams.get("featured") === "true";
     const category = searchParams.get("category");
-    const productId = searchParams.get("productId");
+    const sort = searchParams.get("sort") || "newest";
 
     // Build query
     const query: Record<string, unknown> = { isPublished: true };
 
-    if (featured) {
-      query.isFeatured = true;
-    }
-
     if (category) {
-      query.tags = { $in: [category.toLowerCase()] };
+      query.category = { $regex: category, $options: "i" };
     }
 
-    if (productId) {
-      query.productId = productId;
+    // Build sort
+    let sortQuery: Record<string, 1 | -1> = {};
+    switch (sort) {
+      case "oldest":
+        sortQuery = { createdAt: 1 };
+        break;
+      case "popularity":
+        sortQuery = { views: -1, createdAt: -1 };
+        break;
+      case "newest":
+      default:
+        sortQuery = { createdAt: -1 };
+        break;
     }
 
     // Get total count
-    const total = await Review.countDocuments(query);
+    const total = await Comparison.countDocuments(query);
 
-    // Get reviews with pagination
+    // Get comparisons with pagination
     const skip = (page - 1) * limit;
-    const reviews = await Review.find(query)
-      .populate("productId", "title slug images")
-      .sort({ createdAt: -1 })
+    const comparisons = await Comparison.find(query)
+      .populate(
+        "products",
+        "title slug images brand price averageRating totalReviews"
+      )
+      .sort(sortQuery)
       .skip(skip)
       .limit(limit)
       .lean();
 
     const pages = Math.ceil(total / limit);
 
-    const response: ApiResponse<typeof reviews> = {
+    const response: ApiResponse<typeof comparisons> = {
       success: true,
-      message: "Reviews fetched successfully",
-      data: reviews,
+      message: "Comparisons fetched successfully",
+      data: comparisons,
       pagination: {
         page,
         limit,
@@ -59,9 +67,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error fetching reviews:", error);
+    console.error("Error fetching comparisons:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to fetch reviews" },
+      { success: false, message: "Failed to fetch comparisons" },
       { status: 500 }
     );
   }
@@ -71,26 +79,10 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
 
     // Basic validation
-    const requiredFields = [
-      "title",
-      "content",
-      "rating",
-      "productId",
-      "pros",
-      "cons",
-      "verdict",
-    ];
+    const requiredFields = ["title", "description", "category", "products"];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
@@ -106,24 +98,19 @@ export async function POST(request: NextRequest) {
       body.slug = slugify(body.title, { lower: true, strict: true });
     }
 
-    // Add author information
-    body.authorId = user.id;
-    body.authorName = user.fullName || user.username || "Anonymous";
-    body.authorImage = user.imageUrl;
-
-    const review = new Review(body);
-    await review.save();
+    const comparison = new Comparison(body);
+    await comparison.save();
 
     return NextResponse.json(
       {
         success: true,
-        data: review,
-        message: "Review created successfully",
+        data: comparison,
+        message: "Comparison created successfully",
       },
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("Reviews POST API Error:", error);
+    console.error("Comparisons POST API Error:", error);
 
     if (
       error &&
@@ -132,7 +119,7 @@ export async function POST(request: NextRequest) {
       error.code === 11000
     ) {
       return NextResponse.json(
-        { success: false, message: "Review slug already exists" },
+        { success: false, message: "Comparison slug already exists" },
         { status: 409 }
       );
     }
