@@ -18,7 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const CategoriesPage = ({ params: { locale } }: CategoriesPageProps) => {
+const CategoriesPage = async ({ params }: CategoriesPageProps) => {
+  const { locale } = await params;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">

@@ -2,16 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Product } from "@/types";
-import {
-  Star,
-  Clock,
-  Eye,
-  Heart,
-  Calendar,
-  Share2,
-  GitCompare,
-  ArrowLeft,
-} from "lucide-react";
+import { Star, Share2, GitCompare, ArrowLeft } from "lucide-react";
 import ComparisonModal from "./ComparisonModal";
 import LoadingSpinner from "./LoadingSpinner";
 import Link from "next/link";
@@ -338,49 +329,56 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             )}
 
             {/* Pros and Cons */}
-            {(product.pros?.length > 0 || product.cons?.length > 0) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {product.pros && product.pros.length > 0 && (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-3">
-                      Pros
-                    </h3>
-                    <ul className="space-y-2">
-                      {product.pros.map((pro, index) => (
-                        <li key={index} className="flex items-start space-x-2">
-                          <span className="text-green-600 dark:text-green-400 mt-1">
-                            ✓
-                          </span>
-                          <span className="text-green-700 dark:text-green-300">
-                            {pro}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+            {(product && product.pros && product.pros.length > 0) ||
+              (product && product.cons && product.cons.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {product.pros && product.pros.length > 0 && (
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-3">
+                        Pros
+                      </h3>
+                      <ul className="space-y-2">
+                        {product.pros.map((pro, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <span className="text-green-600 dark:text-green-400 mt-1">
+                              ✓
+                            </span>
+                            <span className="text-green-700 dark:text-green-300">
+                              {pro}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                {product.cons && product.cons.length > 0 && (
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-3">
-                      Cons
-                    </h3>
-                    <ul className="space-y-2">
-                      {product.cons.map((con, index) => (
-                        <li key={index} className="flex items-start space-x-2">
-                          <span className="text-red-600 dark:text-red-400 mt-1">
-                            ✗
-                          </span>
-                          <span className="text-red-700 dark:text-red-300">
-                            {con}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+                  {product.cons && product.cons.length > 0 && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-3">
+                        Cons
+                      </h3>
+                      <ul className="space-y-2">
+                        {product.cons.map((con, index) => (
+                          <li
+                            key={index}
+                            className="flex items-start space-x-2"
+                          >
+                            <span className="text-red-600 dark:text-red-400 mt-1">
+                              ✗
+                            </span>
+                            <span className="text-red-700 dark:text-red-300">
+                              {con}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))}
 
             {/* Tags */}
             {product.tags && product.tags.length > 0 && (
