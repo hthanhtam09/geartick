@@ -3,6 +3,7 @@ export interface Product {
   title: string;
   description: string;
   category: string;
+  subcategory?: string;
   brand: string;
   price: number;
   currency: string;
@@ -14,6 +15,24 @@ export interface Product {
   tags: string[];
   seoTitle?: string;
   seoDescription?: string;
+  colors?: ProductColor[];
+  materials?: string[];
+  developerSupport?: "Excellent" | "Good" | "Fair" | "Poor" | "None";
+  specifications?: ProductSpecification[];
+  dimensions?: {
+    length?: number;
+    width?: number;
+    height?: number;
+    weight?: number;
+    unit?: string;
+  };
+  pros?: string[];
+  cons?: string[];
+  score?: number;
+  bestFor?: string[];
+  worstFor?: string[];
+  releaseDate?: Date;
+  isDiscontinued?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
