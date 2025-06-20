@@ -1,8 +1,21 @@
-import { ComparisonTable } from "@/types";
+import { ProductComparison } from "@/types";
 import { formatDate } from "@/lib/utils";
 
 interface ComparisonDetailHeaderProps {
-  comparison: ComparisonTable;
+  comparison: {
+    _id: string;
+    title: string;
+    description: string;
+    category: string;
+    products: ProductComparison[];
+    slug: string;
+    authorId: string;
+    authorName: string;
+    isPublished: boolean;
+    views: number;
+    createdAt: Date;
+    updatedAt: Date;
+  };
   locale: string;
 }
 

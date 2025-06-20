@@ -3,21 +3,20 @@ import { getTranslations } from "next-intl/server";
 import ReviewsList from "@/components/ReviewsList";
 
 interface ReviewsPageProps {
-  params: {
-    locale: string;
-  };
-  searchParams: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{
     page?: string;
     featured?: string;
     category?: string;
-  };
+  }>;
 }
 
 export const generateMetadata = async ({
   params,
 }: ReviewsPageProps): Promise<Metadata> => {
+  const { locale } = await params;
   const t = await getTranslations({
-    locale: params.locale,
+    locale,
     namespace: "Reviews",
   });
 
@@ -36,14 +35,17 @@ const ReviewsPage: React.FC<ReviewsPageProps> = async ({
   params,
   searchParams,
 }) => {
+  const { locale } = await params;
+  const resolvedSearchParams = await searchParams;
+
   const t = await getTranslations({
-    locale: params.locale,
+    locale,
     namespace: "Reviews",
   });
 
-  const page = parseInt(searchParams.page || "1");
-  const featured = searchParams.featured === "true";
-  const category = searchParams.category;
+  const page = parseInt(resolvedSearchParams.page || "1");
+  const featured = resolvedSearchParams.featured === "true";
+  const category = resolvedSearchParams.category;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
@@ -63,7 +65,7 @@ const ReviewsPage: React.FC<ReviewsPageProps> = async ({
           initialPage={page}
           featured={featured}
           category={category}
-          locale={params.locale}
+          locale={locale}
         />
       </div>
     </div>

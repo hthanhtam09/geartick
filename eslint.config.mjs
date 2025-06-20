@@ -13,7 +13,8 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    "plugin:any/recommended"
+    "plugin:any/recommended",
+    "exhaustive-deps"
   ),
 ];
 

@@ -455,13 +455,24 @@ const DetailedReviewPage: React.FC<DetailedReviewPageProps> = ({
                 <span>{review.likes.toLocaleString()} likes</span>
               </div>
             </div>
-            <button
-              onClick={handleShare}
-              className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share</span>
-            </button>
+            <div className="flex items-center space-x-3">
+              {product && (
+                <button
+                  onClick={() => setShowComparisonModal(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
+                >
+                  <GitCompare className="w-4 h-4" />
+                  <span>Compare Products</span>
+                </button>
+              )}
+              <button
+                onClick={handleShare}
+                className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share</span>
+              </button>
+            </div>
           </div>
 
           {/* Rating */}
@@ -1537,13 +1548,6 @@ const DetailedReviewPage: React.FC<DetailedReviewPageProps> = ({
                       )}{" "}
                       Now
                     </span>
-                  </button>
-                  <button
-                    onClick={() => setShowComparisonModal(true)}
-                    className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-semibold rounded-lg transition-colors duration-200"
-                  >
-                    <GitCompare className="w-5 h-5" />
-                    <span>Compare Alternatives</span>
                   </button>
                 </div>
               </div>

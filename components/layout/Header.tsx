@@ -6,6 +6,7 @@ import { Search, Moon, Sun, Menu, X, User } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { useTheme } from "../providers/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
+import LanguageSelector from "../LanguageSelector";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -90,6 +91,9 @@ const Header = () => {
               )}
             </button>
 
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* Authentication */}
             {isSignedIn ? (
               <UserButton afterSignOutUrl="/" />
@@ -159,6 +163,15 @@ const Header = () => {
                     {item.name}
                   </Link>
                 ))}
+
+                {/* Language Selector for Mobile */}
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Language
+                  </span>
+                  <LanguageSelector />
+                </div>
+
                 {!isSignedIn && (
                   <div className="flex flex-col space-y-2 pt-4 border-t">
                     <SignInButton mode="modal">

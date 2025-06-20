@@ -255,88 +255,45 @@ const mockReviews = [
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params;
+    await connectDB();
+    const { slug } = await params;
 
-    if (!slug) {
-      return NextResponse.json(
-        {
-          success: false,
-          data: null,
-          message: "Review slug is required",
-        } as ApiResponse<null>,
-        { status: 400 }
-      );
-    }
-
-    let review: ReviewType | null = null;
-    let isFromDatabase = false;
-
+    // Try to find review in database first
     try {
-      // Try to connect to database
-      await connectDB();
+      const Review = (await import("@/lib/models/Review")).default;
+      const review = await Review.findOne({ slug, isPublished: true }).lean();
 
-      // Find review by slug
-      const dbReview = await Review.findOne({ slug, isPublished: true })
-        .populate("productId", "title slug images brand category price")
-        .lean();
-
-      if (dbReview) {
-        review = dbReview as unknown as ReviewType;
-        isFromDatabase = true;
-      } else {
-        // If not found in database, check mock data
-        review = mockReviews.find((r) => r.slug === slug) || null;
+      if (review) {
+        return NextResponse.json({
+          success: true,
+          data: review,
+        });
       }
     } catch (dbError) {
-      console.error("Database connection failed, using mock data:", dbError);
-
-      // Fallback to mock data
-      review = mockReviews.find((r) => r.slug === slug) || null;
+      console.log("Database not available, using mock data");
     }
 
-    if (!review) {
+    // Fallback to mock data
+    const mockReview = mockReviews.find((r) => r.slug === slug);
+
+    if (!mockReview) {
       return NextResponse.json(
-        {
-          success: false,
-          data: null,
-          message: "Review not found",
-        } as ApiResponse<null>,
+        { success: false, message: "Review not found" },
         { status: 404 }
       );
     }
 
-    // Increment view count if review is from database
-    if (isFromDatabase && review._id) {
-      try {
-        await Review.findByIdAndUpdate(review._id, {
-          $inc: { views: 1 },
-        });
-      } catch (updateError) {
-        console.error("Failed to update view count:", updateError);
-        // Continue without updating view count
-      }
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: review,
-        message: "Review fetched successfully",
-      } as ApiResponse<ReviewType>,
-      { status: 200 }
-    );
+    return NextResponse.json({
+      success: true,
+      data: mockReview,
+    });
   } catch (error) {
-    console.error("Error fetching review by slug:", error);
-
+    console.error("Reviews API Error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        data: null,
-        message: "Internal server error",
-      } as ApiResponse<null>,
+      { success: false, message: "Internal server error" },
       { status: 500 }
     );
   }

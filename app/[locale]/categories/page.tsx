@@ -5,9 +5,7 @@ import ComparisonCategories from "@/components/ComparisonCategories";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface CategoriesPageProps {
-  params: {
-    locale: string;
-  };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
